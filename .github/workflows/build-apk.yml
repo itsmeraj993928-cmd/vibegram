@@ -30,20 +30,19 @@ jobs:
       - name: Build Web Assets
         run: npm run build
 
-      - name: Ensure Dist Directory Exists
-        run: mkdir -p dist && touch dist/index.html
-
       - name: Add Android Platform
         run: npx cap add android || true
 
-      - name: Sync Capacitor Android
+      - name: Sync Capacitor
         run: npx cap sync android
 
       - name: Build Debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace --info
+          ./gradlew assembleDebug -x test
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_21_X64 }}
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
