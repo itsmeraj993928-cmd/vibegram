@@ -30,17 +30,20 @@ jobs:
       - name: Build Web Assets
         run: npm run build
 
-      - name: Add Android Platform
-        run: npx cap add android || true
+      - name: Ensure Dist Directory
+        run: mkdir -p dist && touch dist/index.html
 
-      - name: Sync Capacitor Android
-        run: npx cap sync android
+      - name: Re-create Fresh Android Project
+        run: |
+          rm -rf android
+          npx cap add android
+          npx cap sync android
 
       - name: Build Debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon -Dorg.gradle.java.home=$JAVA_HOME_21_X64
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
