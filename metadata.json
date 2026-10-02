@@ -1,0 +1,6 @@
+{
+  "name": "Vibegram - India's Vibrant Social Community",
+  "description": "Vibegram is a modern mobile-first social media platform tailored for Indian creators and users with photo & video sharing, vertical Vibes reels, regional Adda communities, bilingual Hindi/English interface, and advanced creator & admin analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

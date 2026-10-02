@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <linearGradient id="vibeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF3366"/>
+      <stop offset="50%" stop-color="#FF5E3A"/>
+      <stop offset="100%" stop-color="#FFAE19"/>
+    </linearGradient>
+    <linearGradient id="pulseGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
+
+  <!-- Subtle concentric resonant rings (representing vibes / resonance) -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="white" stroke-opacity="0.05" stroke-width="2"/>
+  <circle cx="256" cy="256" r="220" fill="none" stroke="white" stroke-opacity="0.03" stroke-width="2"/>
+
+  <!-- Stylized Vibe Pulse Waves - Original Brand Mark -->
+  <g filter="url(#glow)">
+    <!-- Primary energetic 'V' ribbon wave -->
+    <path d="M140 160 C 180 230, 220 330, 256 380 C 292 330, 332 230, 372 160 C 392 125, 435 155, 415 195 C 370 285, 305 410, 268 418 C 248 422, 236 410, 204 350 C 170 285, 120 190, 100 155 C 80 120, 120 125, 140 160 Z" 
+          fill="url(#vibeGrad)" />
+
+    <!-- Intersecting audio/vibe loop dot -->
+    <circle cx="256" cy="190" r="32" fill="url(#pulseGrad)"/>
+    <circle cx="256" cy="190" r="18" fill="#FFFFFF"/>
+    
+    <!-- Rhythm equalizer bars in heart-wave formation -->
+    <rect x="180" y="240" width="8" height="28" rx="4" fill="#FF5E3A" opacity="0.8"/>
+    <rect x="324" y="240" width="8" height="28" rx="4" fill="#FFAE19" opacity="0.8"/>
+    <rect x="156" y="220" width="8" height="20" rx="4" fill="#FF3366" opacity="0.6"/>
+    <rect x="348" y="220" width="8" height="20" rx="4" fill="#FFAE19" opacity="0.6"/>
+  </g>
+</svg>
