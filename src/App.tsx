@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import CreatePost from './components/CreatePost';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // 1. Auth State Check
   useEffect(() => {
@@ -28,20 +30,32 @@ export default function App() {
   return (
     <div className="bg-black min-h-screen text-white pb-16">
       {/* Header */}
-      <header className="app-header flex justify-between items-center p-3 border-b border-gray-800">
+      <header className="app-header flex justify-between items-center p-3 border-b border-gray-800 sticky top-0 bg-black z-40">
         <h1 className="logo-text text-2xl font-bold">Vibegram</h1>
-        <div className="flex gap-4 text-xl">
+        <div className="flex gap-4 text-xl items-center">
+          <button onClick={() => setShowCreateModal(true)} className="text-2xl font-bold">➕</button>
           <button onClick={() => setActiveTab('notifications')}>❤️</button>
           <button onClick={() => setActiveTab('messages')}>💬</button>
         </div>
       </header>
+
+      {/* Upload Modal */}
+      {showCreateModal && <CreatePost onClose={() => setShowCreateModal(false)} />}
 
       {/* Main Content Screens */}
       <main className="max-w-md mx-auto">
         {activeTab === 'home' && (
           <div className="feed-container p-2">
             {posts.length === 0 ? (
-              <p className="text-center text-gray-500 my-10">Koi post nahi hai. Naya post upload karein!</p>
+              <div className="text-center text-gray-500 my-10">
+                <p>Koi post nahi hai.</p>
+                <button 
+                  onClick={() => setShowCreateModal(true)} 
+                  className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm"
+                >
+                  Pehla Post Share Karein
+                </button>
+              </div>
             ) : (
               posts.map(post => (
                 <div key={post.id} className="post-card my-4 border-b border-gray-800 pb-4">
@@ -49,7 +63,11 @@ export default function App() {
                     <img src={post.userImage || "https://via.placeholder.com/40"} className="w-8 h-8 rounded-full" alt="avatar" />
                     <span className="font-bold text-sm">{post.username}</span>
                   </div>
-                  <img src={post.mediaUrl} className="w-full rounded" alt="post" />
+                  {post.type === 'reel' ? (
+                    <video src={post.mediaUrl} controls className="w-full rounded max-h-96 object-cover" />
+                  ) : (
+                    <img src={post.mediaUrl} className="w-full rounded" alt="post" />
+                  )}
                   <div className="post-actions flex gap-4 my-2 text-xl">
                     <button>❤️ {post.likes?.length || 0}</button>
                     <button>💬 {post.comments?.length || 0}</button>
@@ -78,4 +96,3 @@ export default function App() {
     </div>
   );
             }
-                      
