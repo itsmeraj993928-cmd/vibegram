@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDv7LA4eWsOx8YE46LT91ZI",
+  apiKey: "AIzaSyDv7LA4eWsOx8YE46LT91ZIBYeb7aIC310",
   authDomain: "vibegram-8e6bf.firebaseapp.com",
   projectId: "vibegram-8e6bf",
   storageBucket: "vibegram-8e6bf.firebasestorage.app",
   messagingSenderId: "1058216879180",
-  appId: "1:1058216879180:web:764e706a4",
+  appId: "1:1058216879180:web:764e706a45d1c13f70c0e9",
   measurementId: "G-VWN0CB0NXZ"
 };
 
