@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import CreatePost from './components/CreatePost';
+import ReelsView from './components/ReelsView';
+import Auth from './Auth';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // 1. Auth State Check
   useEffect(() => {
@@ -27,20 +30,31 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  const handleLogout = async () => {
+    await signOut(auth);
+    alert('Logged out successfully!');
+  };
+
   return (
     <div className="bg-black min-h-screen text-white pb-16">
       {/* Header */}
       <header className="app-header flex justify-between items-center p-3 border-b border-gray-800 sticky top-0 bg-black z-40">
         <h1 className="logo-text text-2xl font-bold">Vibegram</h1>
         <div className="flex gap-4 text-xl items-center">
-          <button onClick={() => setShowCreateModal(true)} className="text-2xl font-bold">➕</button>
+          <button 
+            onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)} 
+            className="text-2xl font-bold"
+          >
+            ➕
+          </button>
           <button onClick={() => setActiveTab('notifications')}>❤️</button>
           <button onClick={() => setActiveTab('messages')}>💬</button>
         </div>
       </header>
 
-      {/* Upload Modal */}
+      {/* Modals */}
       {showCreateModal && <CreatePost onClose={() => setShowCreateModal(false)} />}
+      {showAuthModal && <Auth onClose={() => setShowAuthModal(false)} />}
 
       {/* Main Content Screens */}
       <main className="max-w-md mx-auto">
@@ -50,7 +64,7 @@ export default function App() {
               <div className="text-center text-gray-500 my-10">
                 <p>Koi post nahi hai.</p>
                 <button 
-                  onClick={() => setShowCreateModal(true)} 
+                  onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)} 
                   className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm"
                 >
                   Pehla Post Share Karein
@@ -79,10 +93,43 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === 'reels' && <div className="p-4 text-center my-10">🎬 Reels View</div>}
+        {/* Dynamic Views */}
+        {activeTab === 'reels' && <ReelsView />}
         {activeTab === 'search' && <div className="p-4 text-center my-10">🔍 Search Users & Posts</div>}
         {activeTab === 'messages' && <div className="p-4 text-center my-10">💬 Direct Messages</div>}
-        {activeTab === 'profile' && <div className="p-4 text-center my-10">👤 Profile & Settings</div>}
+
+        {/* Profile Tab */}
+        {activeTab === 'profile' && (
+          <div className="p-4 text-center my-10">
+            {user ? (
+              <div className="flex flex-col items-center gap-4">
+                <img 
+                  src={user.photoURL || "https://via.placeholder.com/100"} 
+                  className="w-20 h-20 rounded-full border-2 border-pink-500" 
+                  alt="profile" 
+                />
+                <h2 className="text-xl font-bold">{user.displayName || user.email}</h2>
+                <p className="text-gray-400 text-sm">{user.email}</p>
+                <button 
+                  onClick={handleLogout} 
+                  className="bg-red-600 px-6 py-2 rounded-lg text-sm font-bold mt-4"
+                >
+                  Log Out
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-gray-400">Profile dekhne ke liye login karein</p>
+                <button 
+                  onClick={() => setShowAuthModal(true)} 
+                  className="bg-blue-600 px-6 py-2 rounded-lg text-sm font-bold"
+                >
+                  Log In / Sign Up
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {/* Bottom Navigation Bar */}
@@ -95,4 +142,4 @@ export default function App() {
       </div>
     </div>
   );
-            }
+}
