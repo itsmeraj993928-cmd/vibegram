@@ -1,29 +1,54 @@
-<!doctype html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Vibegram - India's Vibrant Social Community</title>
-    <meta name="description" content="Vibegram is a modern mobile-first social media platform tailored for Indian creators and users with photo & video sharing, vertical Vibes reels, regional Adda communities, bilingual Hindi/English interface, and advanced creator & admin analytics." />
-    <meta property="og:title" content="Vibegram - India's Vibrant Social Community" />
-    <meta property="og:description" content="Vibegram is a modern mobile-first social media platform tailored for Indian creators and users with photo & video sharing, vertical Vibes reels, regional Adda communities, bilingual Hindi/English interface, and advanced creator & admin analytics." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/icon.svg" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#0f172a" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Vibegram" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rozha+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-rose-500 selection:text-white">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<div class="settings-container">
+  <div class="settings-header">
+    <button class="back-btn" onclick="history.back()">←</button>
+    <h2>Settings and activity</h2>
+  </div>
 
+  <div class="search-bar">
+    <input type="text" placeholder="Search">
+  </div>
+
+  <!-- Accounts Center Section -->
+  <div class="section-card accounts-center" onclick="openPage('accountsCenter')">
+    <div class="meta-logo">Infinity Meta</div>
+    <div class="section-title">Accounts Center</div>
+    <p class="section-desc">Password, security, personal details, ad preferences</p>
+  </div>
+
+  <!-- How you use Instagram -->
+  <div class="menu-group">
+    <div class="group-title">How you use Vibegram</div>
+    <div class="menu-item" onclick="openPage('saved')"><span>Saved</span> ❯</div>
+    <div class="menu-item" onclick="openPage('archive')"><span>Archive</span> ❯</div>
+    <div class="menu-item" onclick="openPage('activity')"><span>Your activity</span> ❯</div>
+    <div class="menu-item" onclick="openPage('notifications')"><span>Notifications</span> ❯</div>
+    <div class="menu-item" onclick="openPage('time')"><span>Time management</span> ❯</div>
+  </div>
+
+  <!-- Who can see your content -->
+  <div class="menu-group">
+    <div class="group-title">Who can see your content</div>
+    <div class="menu-item" onclick="togglePrivacy()">
+      <span>Account privacy</span>
+      <span id="privacy-status" class="status-badge">Public</span>
+    </div>
+    <div class="menu-item" onclick="openPage('closeFriends')"><span>Close Friends</span> ❯</div>
+    <div class="menu-item" onclick="openPage('blocked')"><span>Blocked</span> ❯</div>
+  </div>
+
+  <!-- How others can interact with you -->
+  <div class="menu-group">
+    <div class="group-title">How others can interact with you</div>
+    <div class="menu-item" onclick="openPage('messages')"><span>Messages and story replies</span> ❯</div>
+    <div class="menu-item" onclick="openPage('tags')"><span>Tags and mentions</span> ❯</div>
+    <div class="menu-item" onclick="openPage('comments')"><span>Comments</span> ❯</div>
+    <div class="menu-item" onclick="openPage('hiddenWords')"><span>Hidden Words</span> ❯</div>
+  </div>
+
+  <!-- Account Actions -->
+  <div class="menu-group">
+    <div class="menu-item action-text" onclick="addAccount()">Add account</div>
+    <div class="menu-item logout-btn" onclick="logoutUser()">Log out</div>
+  </div>
+  </div>
+  
