@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Auth from './Auth';
+import React, { useEffect, useState } from "react";
+import Auth from "./Auth";
 
 interface Post {
   id: number;
@@ -12,304 +12,188 @@ interface Post {
   comments: string[];
 }
 
-interface Reel {
-  id: number;
-  user: string;
-  avatar: string;
-  video: string;
-  caption: string;
-  likes: number;
-  comments: number;
-  shares: number;
+interface UserData {
+  username: string;
+  name?: string;
+  avatar?: string;
+  bio?: string;
+  postsCount?: number;
+  followersCount?: number;
+  followingCount?: number;
 }
 
-type Tab = 'home' | 'search' | 'reels' | 'add' | 'profile';
-
 export default function App() {
-  const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<Tab>('home');
-  const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
-  const [openMenu, setOpenMenu] = useState<number | null>(null);
-  const [searchText, setSearchText] = useState('');
-  const [newPostCaption, setNewPostCaption] = useState('');
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [selectedFileType, setSelectedFileType] = useState<'image' | 'video' | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "home" | "search" | "add" | "profile"
+  >("home");
+
+  const [searchText, setSearchText] = useState("");
+  const [newComment, setNewComment] = useState<Record<number, string>>("");
 
   const [posts, setPosts] = useState<Post[]>([
     {
       id: 1,
-      user: 'alex_tech',
+      user: "alex_tech",
       avatar:
-        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
       image:
-        'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900',
-      caption: 'Exploring new AI vibes ✨ #Vibegram #Tech',
+        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900",
+      caption: "Exploring new AI vibes ✨ #Vibegram #Tech",
       likes: 124,
       isLiked: false,
-      comments: ['Awesome shot!', 'Looks super cool 🔥'],
+      comments: ["Awesome shot!", "Looks super cool 🔥"],
     },
     {
       id: 2,
-      user: 'nature_lover',
+      user: "nature_lover",
       avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
       image:
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900',
-      caption: 'Beautiful nature 🌊 #ChillVibes',
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900",
+      caption: "Sunset peace 🌅 #ChillVibes",
       likes: 89,
       isLiked: false,
-      comments: ['Amazing place 😍'],
-    },
-  ]);
-
-  const [reels, setReels] = useState<Reel[]>([
-    {
-      id: 1,
-      user: 'vibe_creator',
-      avatar: 'https://i.pravatar.cc/150?img=12',
-      video:
-        'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-      caption: 'Beautiful vibes ✨ #Vibegram #Reels',
-      likes: 2450,
-      comments: 126,
-      shares: 54,
+      comments: ["Where is this spot? 😍"],
     },
     {
-      id: 2,
-      user: 'travel_vibes',
-      avatar: 'https://i.pravatar.cc/150?img=32',
-      video:
-        'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm',
-      caption: 'Nature vibes 🌿🔥',
-      likes: 1890,
-      comments: 84,
-      shares: 31,
+      id: 3,
+      user: "travel_vibes",
+      avatar: "https://i.pravatar.cc/150?img=12",
+      image:
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",
+      caption: "Beautiful place and beautiful vibes 🌍✨",
+      likes: 201,
+      isLiked: false,
+      comments: ["Amazing!", "I want to visit this place ❤️"],
     },
   ]);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('vibegram_user');
+    const savedUser = localStorage.getItem("vibegram_user");
 
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
       } catch {
-        localStorage.removeItem('vibegram_user');
+        localStorage.removeItem("vibegram_user");
       }
     }
   }, []);
 
+  const handleLogin = (userData: UserData) => {
+    setUser(userData);
+    localStorage.setItem("vibegram_user", JSON.stringify(userData));
+  };
+
   const handleLogout = () => {
-    localStorage.removeItem('vibegram_user');
+    localStorage.removeItem("vibegram_user");
     setUser(null);
+    setActiveTab("home");
   };
 
   const handleLike = (id: number) => {
     setPosts((currentPosts) =>
-      currentPosts.map((post) => {
-        if (post.id !== id) {
-          return post;
-        }
-
-        return {
-          ...post,
-          likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-          isLiked: !post.isLiked,
-        };
-      })
-    );
-  };
-
-  const handleAddComment = (postId: number) => {
-    const text = newComment[postId]?.trim();
-
-    if (!text) {
-      return;
-    }
-
-    const username = user?.username || 'you';
-
-    setPosts((currentPosts) =>
-      currentPosts.map((post) => {
-        if (post.id !== postId) {
-          return post;
-        }
-
-        return {
-          ...post,
-          comments: [...post.comments, `${username}: ${text}`],
-        };
-      })
-    );
-
-    setNewComment((current) => ({
-      ...current,
-      [postId]: '',
-    }));
-  };
-
-  const handleReelLike = (id: number) => {
-    setReels((currentReels) =>
-      currentReels.map((reel) =>
-        reel.id === id
-          ? { ...reel, likes: reel.likes + 1 }
-          : reel
+      currentPosts.map((post) =>
+        post.id === id
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+            }
+          : post
       )
     );
   };
 
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-
-    setSelectedFile(url);
-
-    if (file.type.startsWith('video/')) {
-      setSelectedFileType('video');
-    } else {
-      setSelectedFileType('image');
-    }
+  const handleCommentChange = (postId: number, value: string) => {
+    setNewComment((current) => ({
+      ...current,
+      [postId]: value,
+    }));
   };
 
-  const publishPost = () => {
-    if (!selectedFile) {
-      alert('Please select a photo or video first.');
-      return;
-    }
+  const handleAddComment = (postId: number) => {
+    if (!user) return;
 
-    const username = user?.username || 'new_user';
+    const text = newComment[postId]?.trim();
 
-    if (selectedFileType === 'video') {
-      const newReel: Reel = {
-        id: Date.now(),
-        user: username,
-        avatar: user?.avatar || 'https://i.pravatar.cc/150',
-        video: selectedFile,
-        caption: newPostCaption || 'New Vibegram Reel ✨',
-        likes: 0,
-        comments: 0,
-        shares: 0,
-      };
+    if (!text) return;
 
-      setReels((current) => [newReel, ...current]);
-    } else {
-      const newPost: Post = {
-        id: Date.now(),
-        user: username,
-        avatar: user?.avatar || 'https://i.pravatar.cc/150',
-        image: selectedFile,
-        caption: newPostCaption || 'New Vibegram post ✨',
-        likes: 0,
-        isLiked: false,
-        comments: [],
-      };
+    setPosts((currentPosts) =>
+      currentPosts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: [
+                ...post.comments,
+                `${user.username}: ${text}`,
+              ],
+            }
+          : post
+      )
+    );
 
-      setPosts((current) => [newPost, ...current]);
-    }
-
-    setSelectedFile(null);
-    setSelectedFileType(null);
-    setNewPostCaption('');
-    setActiveTab(selectedFileType === 'video' ? 'reels' : 'home');
+    setNewComment((current) => ({
+      ...current,
+      [postId]: "",
+    }));
   };
 
   if (!user) {
-    return (
-      <Auth
-        onLogin={(userData) => {
-          setUser(userData);
-          localStorage.setItem(
-            'vibegram_user',
-            JSON.stringify(userData)
-          );
-        }}
-      />
-    );
+    return <Auth onLogin={handleLogin} />;
   }
 
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <header style={styles.header}>
-        <button
-          style={styles.headerButton}
-          onClick={() => alert('Vibegram camera')}
-        >
-          📷
-        </button>
-
         <h1 style={styles.logo}>Vibegram</h1>
-
-        <button
-          style={styles.headerButton}
-          onClick={() => setActiveTab('reels')}
-        >
-          🎬
-        </button>
       </header>
 
-      {/* MAIN */}
       <main style={styles.main}>
-        {/* HOME */}
-        {activeTab === 'home' && (
+        {activeTab === "home" && (
           <div>
-            {/* STORIES */}
             <div style={styles.storyRow}>
               <div style={styles.storyItem}>
-                <div style={styles.storyRing}>
-                  <img
-                    src={user.avatar || 'https://i.pravatar.cc/150'}
-                    alt="Your story"
-                    style={styles.storyImage}
-                  />
-                </div>
+                <img
+                  src={user.avatar || "https://i.pravatar.cc/150"}
+                  alt="Your story"
+                  style={styles.storyRing}
+                />
                 <span>Your story</span>
               </div>
 
               <div style={styles.storyItem}>
-                <div style={styles.storyRing}>
-                  <img
-                    src="https://i.pravatar.cc/150?img=1"
-                    alt="Story"
-                    style={styles.storyImage}
-                  />
-                </div>
+                <img
+                  src="https://i.pravatar.cc/150?img=1"
+                  alt="Story"
+                  style={styles.storyRing}
+                />
                 <span>rohit_99</span>
               </div>
 
               <div style={styles.storyItem}>
-                <div style={styles.storyRing}>
-                  <img
-                    src="https://i.pravatar.cc/150?img=5"
-                    alt="Story"
-                    style={styles.storyImage}
-                  />
-                </div>
+                <img
+                  src="https://i.pravatar.cc/150?img=5"
+                  alt="Story"
+                  style={styles.storyRing}
+                />
                 <span>priya_vibe</span>
               </div>
 
               <div style={styles.storyItem}>
-                <div style={styles.storyRing}>
-                  <img
-                    src="https://i.pravatar.cc/150?img=8"
-                    alt="Story"
-                    style={styles.storyImage}
-                  />
-                </div>
-                <span>tech_guy</span>
+                <img
+                  src="https://i.pravatar.cc/150?img=8"
+                  alt="Story"
+                  style={styles.storyRing}
+                />
+                <span>rahul_01</span>
               </div>
             </div>
 
-            {/* POSTS */}
             {posts.map((post) => (
-              <article key={post.id} style={styles.post}>
+              <article key={post.id} style={styles.postCard}>
                 <div style={styles.postHeader}>
                   <img
                     src={post.avatar}
@@ -317,31 +201,8 @@ export default function App() {
                     style={styles.postAvatar}
                   />
 
-                  <div style={styles.userInfo}>
-                    <strong>{post.user}</strong>
-                    <span>Vibegram</span>
-                  </div>
-
-                  {/* THREE DOT MENU */}
-                  <button
-                    style={styles.moreButton}
-                    onClick={() =>
-                      setOpenMenu(
-                        openMenu === post.id ? null : post.id
-                      )
-                    }
-                  >
-                    ⋮
-                  </button>
+                  <strong>{post.user}</strong>
                 </div>
-
-                {openMenu === post.id && (
-                  <div style={styles.postMenu}>
-                    <button>Save</button>
-                    <button>Share</button>
-                    <button>Report</button>
-                  </div>
-                )}
 
                 <img
                   src={post.image}
@@ -351,33 +212,20 @@ export default function App() {
 
                 <div style={styles.actionRow}>
                   <button
-                    style={styles.iconButton}
                     onClick={() => handleLike(post.id)}
+                    style={styles.iconButton}
                   >
-                    {post.isLiked ? '❤️' : '🤍'}
+                    {post.isLiked ? "❤️" : "🤍"}
                   </button>
 
                   <button
+                    onClick={() => setActiveTab("search")}
                     style={styles.iconButton}
-                    onClick={() => {
-                      const input = document.getElementById(
-                        `comment-${post.id}`
-                      );
-
-                      input?.focus();
-                    }}
                   >
                     💬
                   </button>
 
-                  <button style={styles.iconButton}>➤</button>
-
-                  <button
-                    style={styles.saveButton}
-                    onClick={() => alert('Post saved')}
-                  >
-                    🔖
-                  </button>
+                  <button style={styles.iconButton}>↗️</button>
                 </div>
 
                 <div style={styles.likes}>
@@ -385,33 +233,39 @@ export default function App() {
                 </div>
 
                 <div style={styles.caption}>
-                  <strong>{post.user}</strong>{' '}
+                  <strong>{post.user}</strong>{" "}
                   {post.caption}
                 </div>
 
                 <div style={styles.comments}>
-                  {post.comments.slice(-3).map((comment, index) => (
-                    <div key={index}>{comment}</div>
+                  {post.comments.map((comment, index) => (
+                    <div key={index} style={styles.comment}>
+                      {comment}
+                    </div>
                   ))}
                 </div>
 
                 <div style={styles.commentBox}>
                   <input
-                    id={`comment-${post.id}`}
-                    value={newComment[post.id] || ''}
+                    value={newComment[post.id] || ""}
                     onChange={(event) =>
-                      setNewComment({
-                        ...newComment,
-                        [post.id]: event.target.value,
-                      })
+                      handleCommentChange(
+                        post.id,
+                        event.target.value
+                      )
                     }
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        handleAddComment(post.id);
+                      }
+                    }}
                     placeholder="Add a comment..."
                     style={styles.commentInput}
                   />
 
                   <button
-                    style={styles.postButton}
                     onClick={() => handleAddComment(post.id)}
+                    style={styles.postButton}
                   >
                     Post
                   </button>
@@ -421,8 +275,7 @@ export default function App() {
           </div>
         )}
 
-        {/* SEARCH */}
-        {activeTab === 'search' && (
+        {activeTab === "search" && (
           <div style={styles.page}>
             <h2>Search</h2>
 
@@ -431,162 +284,86 @@ export default function App() {
               onChange={(event) =>
                 setSearchText(event.target.value)
               }
-              placeholder="Search users, hashtags..."
+              placeholder="Search users or hashtags..."
               style={styles.searchInput}
             />
 
-            <div style={styles.searchResult}>
+            <div style={styles.searchResults}>
               {searchText ? (
                 <>
-                  <div>🔎 Searching for</div>
-                  <strong>{searchText}</strong>
+                  <div style={styles.userResult}>
+                    <img
+                      src="https://i.pravatar.cc/150?img=12"
+                      alt="User"
+                      style={styles.resultAvatar}
+                    />
+                    <div>
+                      <strong>{searchText}</strong>
+                      <p style={styles.grayText}>
+                        Vibegram user
+                      </p>
+                    </div>
+                  </div>
                 </>
               ) : (
-                <div>Discover people and trending content</div>
+                <p style={styles.grayText}>
+                  Search for users, creators and hashtags.
+                </p>
               )}
             </div>
           </div>
         )}
 
-        {/* REELS */}
-        {activeTab === 'reels' && (
-          <div style={styles.reelsContainer}>
-            {reels.map((reel) => (
-              <div key={reel.id} style={styles.reel}>
-                <video
-                  src={reel.video}
-                  controls
-                  loop
-                  playsInline
-                  style={styles.reelVideo}
-                />
-
-                <div style={styles.reelOverlay}>
-                  <div style={styles.reelUser}>
-                    <img
-                      src={reel.avatar}
-                      alt={reel.user}
-                      style={styles.reelAvatar}
-                    />
-
-                    <strong>@{reel.user}</strong>
-                  </div>
-
-                  <div style={styles.reelCaption}>
-                    {reel.caption}
-                  </div>
-                </div>
-
-                <div style={styles.reelActions}>
-                  <button
-                    onClick={() => handleReelLike(reel.id)}
-                    style={styles.reelButton}
-                  >
-                    ❤️
-                    <span>{reel.likes}</span>
-                  </button>
-
-                  <button
-                    style={styles.reelButton}
-                    onClick={() =>
-                      alert(`${reel.comments} comments`)
-                    }
-                  >
-                    💬
-                    <span>{reel.comments}</span>
-                  </button>
-
-                  <button style={styles.reelButton}>
-                    ➤
-                    <span>{reel.shares}</span>
-                  </button>
-
-                  <button style={styles.reelButton}>
-                    🔖
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ADD */}
-        {activeTab === 'add' && (
+        {activeTab === "add" && (
           <div style={styles.page}>
-            <h2>Create</h2>
+            <div style={styles.addIcon}>＋</div>
 
-            <label style={styles.uploadArea}>
-              <div style={{ fontSize: '50px' }}>＋</div>
-              <div>Select Photo or Video</div>
+            <h2>Create New Post</h2>
 
-              <input
-                type="file"
-                accept="image/*,video/*"
-                onChange={handleFileChange}
-                style={{ display: 'none' }}
-              />
-            </label>
+            <p style={styles.grayText}>
+              Upload your photo or video and share it with
+              Vibegram.
+            </p>
 
-            {selectedFile && (
-              <div style={styles.previewBox}>
-                {selectedFileType === 'video' ? (
-                  <video
-                    src={selectedFile}
-                    controls
-                    style={styles.preview}
-                  />
-                ) : (
-                  <img
-                    src={selectedFile}
-                    alt="Preview"
-                    style={styles.preview}
-                  />
-                )}
+            <button
+              style={styles.uploadButton}
+              onClick={() =>
+                alert("Media upload will be connected soon.")
+              }
+            >
+              📷 Select Media
+            </button>
 
-                <textarea
-                  value={newPostCaption}
-                  onChange={(event) =>
-                    setNewPostCaption(event.target.value)
-                  }
-                  placeholder="Write a caption..."
-                  style={styles.captionInput}
-                />
-
-                <button
-                  onClick={publishPost}
-                  style={styles.publishButton}
-                >
-                  Share
-                </button>
-              </div>
-            )}
+            <div style={styles.infoBox}>
+              <p>✨ Add photos</p>
+              <p>🎬 Add videos</p>
+              <p>📝 Write captions</p>
+              <p>❤️ Share with your followers</p>
+            </div>
           </div>
         )}
 
-        {/* PROFILE */}
-        {activeTab === 'profile' && (
+        {activeTab === "profile" && (
           <div style={styles.profile}>
             <img
-              src={user.avatar || 'https://i.pravatar.cc/150'}
+              src={user.avatar || "https://i.pravatar.cc/150"}
               alt="Profile"
               style={styles.profileAvatar}
             />
 
             <h2>{user.name || user.username}</h2>
 
-            <div style={styles.username}>
+            <p style={styles.username}>
               @{user.username}
-            </div>
+            </p>
 
-            <p>
-              {user.bio || 'Vibegram Explorer ✨'}
+            <p style={styles.bio}>
+              {user.bio || "Vibegram Explorer ✨"}
             </p>
 
             <div style={styles.stats}>
               <div>
-                <strong>{posts.filter(
-                  (p) => p.user === user.username
-                ).length}</strong>
+                <strong>{user.postsCount || 0}</strong>
                 <span>Posts</span>
               </div>
 
@@ -603,7 +380,7 @@ export default function App() {
 
             <button
               onClick={handleLogout}
-              style={styles.logout}
+              style={styles.logoutButton}
             >
               Logout
             </button>
@@ -611,45 +388,36 @@ export default function App() {
         )}
       </main>
 
-      {/* BOTTOM NAVIGATION */}
       <nav style={styles.bottomNav}>
         <button
-          onClick={() => setActiveTab('home')}
+          onClick={() => setActiveTab("home")}
           style={styles.navButton}
         >
-          <span>⌂</span>
+          {activeTab === "home" ? "🏠" : "⌂"}
           <small>Home</small>
         </button>
 
         <button
-          onClick={() => setActiveTab('search')}
+          onClick={() => setActiveTab("search")}
           style={styles.navButton}
         >
-          <span>⌕</span>
+          🔍
           <small>Search</small>
         </button>
 
         <button
-          onClick={() => setActiveTab('reels')}
+          onClick={() => setActiveTab("add")}
           style={styles.navButton}
         >
-          <span>▶</span>
-          <small>Reels</small>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('add')}
-          style={styles.navButton}
-        >
-          <span style={styles.plus}>＋</span>
+          ➕
           <small>Create</small>
         </button>
 
         <button
-          onClick={() => setActiveTab('profile')}
+          onClick={() => setActiveTab("profile")}
           style={styles.navButton}
         >
-          <span>●</span>
+          👤
           <small>Profile</small>
         </button>
       </nav>
@@ -657,131 +425,295 @@ export default function App() {
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
+const styles: Record<string, React.CSSProperties> = {
   container: {
-    backgroundColor: '#000',
-    color: '#fff',
-    minHeight: '100vh',
-    paddingBottom: '72px',
+    minHeight: "100vh",
+    backgroundColor: "#000",
+    color: "#fff",
     fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+    paddingBottom: "75px",
   },
 
   header: {
-    height: '58px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0 15px',
-    borderBottom: '1px solid #262626',
-    position: 'sticky',
+    height: "58px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottom: "1px solid #262626",
+    position: "sticky",
     top: 0,
-    backgroundColor: '#000',
-    zIndex: 50,
+    backgroundColor: "#000",
+    zIndex: 10,
   },
 
   logo: {
     margin: 0,
-    fontSize: '25px',
-    fontFamily: 'Georgia, serif',
+    fontSize: "25px",
+    fontWeight: 800,
     background:
-      'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  },
-
-  headerButton: {
-    background: 'transparent',
-    color: '#fff',
-    border: 'none',
-    fontSize: '23px',
-    cursor: 'pointer',
+      "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
   },
 
   main: {
-    width: '100%',
-    maxWidth: '520px',
-    margin: '0 auto',
+    width: "100%",
+    maxWidth: "520px",
+    margin: "0 auto",
   },
 
   storyRow: {
-    display: 'flex',
-    gap: '17px',
-    padding: '13px 15px',
-    overflowX: 'auto',
-    borderBottom: '1px solid #262626',
+    display: "flex",
+    gap: "18px",
+    overflowX: "auto",
+    padding: "14px 12px",
+    borderBottom: "1px solid #262626",
   },
 
   storyItem: {
-    minWidth: '65px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '5px',
-    color: '#bbb',
-    fontSize: '11px',
+    minWidth: "62px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "5px",
+    fontSize: "11px",
+    color: "#bbb",
   },
 
   storyRing: {
-    width: '57px',
-    height: '57px',
-    padding: '2px',
-    borderRadius: '50%',
-    border: '2px solid #e1306c',
+    width: "58px",
+    height: "58px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "2px solid #e1306c",
+    padding: "2px",
   },
 
-  storyImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: '50%',
-    objectFit: 'cover',
-  },
-
-  post: {
-    borderBottom: '1px solid #262626',
-    position: 'relative',
+  postCard: {
+    borderBottom: "1px solid #262626",
+    paddingBottom: "15px",
+    marginBottom: "10px",
   },
 
   postHeader: {
-    height: '55px',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 13px',
-    gap: '10px',
+    height: "55px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    padding: "0 14px",
   },
 
   postAvatar: {
-    width: '35px',
-    height: '35px',
-    borderRadius: '50%',
-    objectFit: 'cover',
+    width: "34px",
+    height: "34px",
+    borderRadius: "50%",
+    objectFit: "cover",
   },
 
-  userInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    fontSize: '14px',
+  postImage: {
+    display: "block",
+    width: "100%",
+    maxHeight: "520px",
+    objectFit: "cover",
   },
 
-  moreButton: {
-    marginLeft: 'auto',
-    background: 'transparent',
-    color: '#fff',
-    border: 'none',
-    fontSize: '25px',
-    cursor: 'pointer',
+  actionRow: {
+    display: "flex",
+    gap: "8px",
+    padding: "8px 12px 3px",
   },
 
-  postMenu: {
-    position: 'absolute',
-    right: '12px',
-    top: '48px',
-    backgroundColor: '#262626',
-    borderRadius: '10px',
-    zIndex: 20,
-    overflow: 'hidden',
-    minWidth: '130px',
+  iconButton: {
+    background: "transparent",
+    border: "none",
+    color: "#fff",
+    fontSize: "24px",
+    cursor: "pointer",
+    padding: "3px",
   },
 
-  postMenuButton: {
-  
+  likes: {
+    fontWeight: 700,
+    fontSize: "14px",
+    padding: "2px 14px",
+  },
+
+  caption: {
+    fontSize: "14px",
+    lineHeight: 1.5,
+    padding: "5px 14px",
+  },
+
+  comments: {
+    padding: "4px 14px",
+    color: "#b5b5b5",
+    fontSize: "13px",
+  },
+
+  comment: {
+    marginBottom: "5px",
+  },
+
+  commentBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "8px 14px",
+    borderTop: "1px solid #181818",
+  },
+
+  commentInput: {
+    flex: 1,
+    border: "none",
+    outline: "none",
+    background: "transparent",
+    color: "#fff",
+    fontSize: "14px",
+  },
+
+  postButton: {
+    border: "none",
+    background: "transparent",
+    color: "#0095f6",
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+
+  page: {
+    padding: "25px 18px",
+    minHeight: "calc(100vh - 140px)",
+  },
+
+  searchInput: {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "13px",
+    borderRadius: "10px",
+    border: "1px solid #333",
+    backgroundColor: "#181818",
+    color: "#fff",
+    outline: "none",
+    fontSize: "15px",
+  },
+
+  searchResults: {
+    marginTop: "25px",
+  },
+
+  userResult: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    padding: "12px 0",
+  },
+
+  resultAvatar: {
+    width: "50px",
+    height: "50px",
+    borderRadius: "50%",
+  },
+
+  grayText: {
+    color: "#999",
+  },
+
+  addIcon: {
+    fontSize: "60px",
+    textAlign: "center",
+    marginTop: "30px",
+  },
+
+  uploadButton: {
+    width: "100%",
+    padding: "13px",
+    marginTop: "20px",
+    border: "none",
+    borderRadius: "10px",
+    backgroundColor: "#0095f6",
+    color: "#fff",
+    fontWeight: 700,
+    fontSize: "15px",
+    cursor: "pointer",
+  },
+
+  infoBox: {
+    marginTop: "30px",
+    padding: "15px",
+    border: "1px solid #292929",
+    borderRadius: "12px",
+    color: "#ccc",
+  },
+
+  profile: {
+    textAlign: "center",
+    padding: "35px 20px",
+  },
+
+  profileAvatar: {
+    width: "100px",
+    height: "100px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "3px solid #e1306c",
+  },
+
+  username: {
+    color: "#999",
+    marginTop: "-5px",
+  },
+
+  bio: {
+    color: "#ddd",
+  },
+
+  stats: {
+    display: "flex",
+    justifyContent: "space-around",
+    marginTop: "25px",
+    padding: "18px 0",
+    borderTop: "1px solid #292929",
+    borderBottom: "1px solid #292929",
+  },
+
+  logoutButton: {
+    width: "100%",
+    marginTop: "25px",
+    padding: "12px",
+    borderRadius: "8px",
+    border: "1px solid #444",
+    backgroundColor: "#1c1c1c",
+    color: "#ff4d5a",
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+
+  bottomNav: {
+    position: "fixed",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "65px",
+    backgroundColor: "#000",
+    borderTop: "1px solid #262626",
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    zIndex: 100,
+  },
+
+  navButton: {
+    width: "25%",
+    height: "100%",
+    background: "transparent",
+    border: "none",
+    color: "#fff",
+    fontSize: "21px",
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "2px",
+  },
+};
