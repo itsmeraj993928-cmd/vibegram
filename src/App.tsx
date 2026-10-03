@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import CreatePost from './components/CreatePost';
-import ReelsView from './components/ReelsView';
+import CreatePost from './CreatePost';
+import ReelsView from './ReelsView';
 import Auth from './Auth';
 
 export default function App() {
@@ -41,15 +41,15 @@ export default function App() {
     <div className="bg-black min-h-screen text-white pb-16">
       {/* Header - Logo par click karne se Home Tab khulega */}
       <header className="app-header flex justify-between items-center p-3 border-b border-gray-800 sticky top-0 bg-black z-40">
-        <h1 
-          className="logo-text text-2xl font-bold cursor-pointer" 
+        <h1
+          className="logo-text text-2xl font-bold cursor-pointer"
           onClick={() => setActiveTab('home')}
         >
           Vibegram
         </h1>
         <div className="flex gap-4 text-xl items-center">
-          <button 
-            onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)} 
+          <button
+            onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)}
             className="text-2xl font-bold"
           >
             ➕
@@ -71,8 +71,8 @@ export default function App() {
             {posts.length === 0 ? (
               <div className="text-center text-gray-500 my-10">
                 <p className="mb-2">Abhi koi post nahi hai.</p>
-                <button 
-                  onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)} 
+                <button
+                  onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm"
                 >
                   Pehla Post Share Karein
@@ -130,15 +130,15 @@ export default function App() {
           <div className="p-4 text-center my-10">
             {user ? (
               <div className="flex flex-col items-center gap-4">
-                <img 
-                  src={user.photoURL || "https://via.placeholder.com/100"} 
-                  className="w-20 h-20 rounded-full border-2 border-pink-500" 
-                  alt="profile" 
+                <img
+                  src={user.photoURL || "https://via.placeholder.com/100"}
+                  className="w-20 h-20 rounded-full border-2 border-pink-500"
+                  alt="profile"
                 />
                 <h2 className="text-xl font-bold">{user.displayName || user.email}</h2>
                 <p className="text-gray-400 text-sm">{user.email}</p>
-                <button 
-                  onClick={handleLogout} 
+                <button
+                  onClick={handleLogout}
                   className="bg-red-600 px-6 py-2 rounded-lg text-sm font-bold mt-4"
                 >
                   Log Out
@@ -147,8 +147,8 @@ export default function App() {
             ) : (
               <div className="flex flex-col items-center gap-4">
                 <p className="text-gray-400">Profile dekhne ke liye login karein</p>
-                <button 
-                  onClick={() => setShowAuthModal(true)} 
+                <button
+                  onClick={() => setShowAuthModal(true)}
                   className="bg-blue-600 px-6 py-2 rounded-lg text-sm font-bold"
                 >
                   Log In / Sign Up
@@ -169,4 +169,4 @@ export default function App() {
       </div>
     </div>
   );
-      }
+}
