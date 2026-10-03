@@ -92,10 +92,9 @@ export default function App() {
 
   return (
     <div style={styles.container}>
-      {/* Top Bar */}
+      {/* Top Header */}
       <header style={styles.header}>
         <h1 style={styles.logo}>Vibegram</h1>
-        <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
       </header>
 
       {/* Main Content View */}
@@ -185,11 +184,14 @@ export default function App() {
             <p style={styles.profileUsername}>@{user.username}</p>
             <p style={styles.profileBio}>{user.bio || 'Vibegram Explorer ✨'}</p>
 
+            {/* Default Stats for New User */}
             <div style={styles.statsRow}>
-              <div><strong>0</strong><br/><span style={styles.statLabel}>Posts</span></div>
-              <div><strong>128</strong><br/><span style={styles.statLabel}>Followers</span></div>
-              <div><strong>85</strong><br/><span style={styles.statLabel}>Following</span></div>
+              <div><strong>{user.postsCount || 0}</strong><br/><span style={styles.statLabel}>Posts</span></div>
+              <div><strong>{user.followersCount || 0}</strong><br/><span style={styles.statLabel}>Followers</span></div>
+              <div><strong>{user.followingCount || 0}</strong><br/><span style={styles.statLabel}>Following</span></div>
             </div>
+
+            <button onClick={handleLogout} style={styles.logoutBtnProfile}>Logout Account</button>
           </div>
         )}
       </main>
@@ -223,7 +225,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   header: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     padding: '12px 16px',
     borderBottom: '1px solid #262626',
@@ -240,12 +242,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     WebkitTextFillColor: 'transparent',
     margin: 0
   },
-  logoutBtn: {
-    backgroundColor: 'transparent',
+  logoutBtnProfile: {
+    backgroundColor: '#262626',
     color: '#ed4956',
-    border: 'none',
+    border: '1px solid #363636',
+    borderRadius: '8px',
+    padding: '8px 16px',
     fontWeight: 'bold',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    marginTop: '25px',
+    width: '100%'
   },
   main: {
     maxWidth: '480px',
@@ -399,4 +405,4 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#fff'
   }
 };
-                       
+      
