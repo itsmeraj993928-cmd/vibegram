@@ -7,6 +7,7 @@ import ReelsView from './components/ReelsView';
 import Auth from './Auth';
 
 export default function App() {
+  // Default tab hamesha 'home' rahega
   const [activeTab, setActiveTab] = useState('home');
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
@@ -32,14 +33,20 @@ export default function App() {
 
   const handleLogout = async () => {
     await signOut(auth);
+    setActiveTab('home');
     alert('Logged out successfully!');
   };
 
   return (
     <div className="bg-black min-h-screen text-white pb-16">
-      {/* Header */}
+      {/* Header - Logo par click karne se Home Tab khulega */}
       <header className="app-header flex justify-between items-center p-3 border-b border-gray-800 sticky top-0 bg-black z-40">
-        <h1 className="logo-text text-2xl font-bold">Vibegram</h1>
+        <h1 
+          className="logo-text text-2xl font-bold cursor-pointer" 
+          onClick={() => setActiveTab('home')}
+        >
+          Vibegram
+        </h1>
         <div className="flex gap-4 text-xl items-center">
           <button 
             onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)} 
@@ -58,14 +65,15 @@ export default function App() {
 
       {/* Main Content Screens */}
       <main className="max-w-md mx-auto">
+        {/* 1. HOME FEED TAB */}
         {activeTab === 'home' && (
           <div className="feed-container p-2">
             {posts.length === 0 ? (
               <div className="text-center text-gray-500 my-10">
-                <p>Koi post nahi hai.</p>
+                <p className="mb-2">Abhi koi post nahi hai.</p>
                 <button 
                   onClick={() => user ? setShowCreateModal(true) : setShowAuthModal(true)} 
-                  className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm"
                 >
                   Pehla Post Share Karein
                 </button>
@@ -93,12 +101,31 @@ export default function App() {
           </div>
         )}
 
-        {/* Dynamic Views */}
+        {/* 2. REELS TAB */}
         {activeTab === 'reels' && <ReelsView />}
-        {activeTab === 'search' && <div className="p-4 text-center my-10">🔍 Search Users & Posts</div>}
-        {activeTab === 'messages' && <div className="p-4 text-center my-10">💬 Direct Messages</div>}
 
-        {/* Profile Tab */}
+        {/* 3. SEARCH TAB */}
+        {activeTab === 'search' && (
+          <div className="p-4 text-center my-10 text-gray-400">
+            🔍 Search Users & Posts
+          </div>
+        )}
+
+        {/* 4. MESSAGES TAB */}
+        {activeTab === 'messages' && (
+          <div className="p-4 text-center my-10 text-gray-400">
+            💬 Direct Messages
+          </div>
+        )}
+
+        {/* 5. NOTIFICATIONS TAB */}
+        {activeTab === 'notifications' && (
+          <div className="p-4 text-center my-10 text-gray-400">
+            ❤️ Notifications & Activity
+          </div>
+        )}
+
+        {/* 6. PROFILE TAB */}
         {activeTab === 'profile' && (
           <div className="p-4 text-center my-10">
             {user ? (
@@ -142,4 +169,4 @@ export default function App() {
       </div>
     </div>
   );
-}
+      }
