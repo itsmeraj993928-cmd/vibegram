@@ -64,4 +64,25 @@
 .animate-disc {
   animation: disc-spin 4s linear infinite;
 }
+/* Instagram Dark Mode Extra Styles */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: #000000;
+  border-top: 0.5px solid #262626;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+.story-ring {
+  padding: 2px;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  border-radius: 50%;
+  display: inline-block;
+}
 
